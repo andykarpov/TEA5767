@@ -120,8 +120,8 @@
 #define TEA5767_RESERVED_MASK    0xff
 
 /* internal constants */
-#define TEA5767_SEARCH_UP 1
-#define TEA5767_SEARCH_DOWN 2
+#define TEA5767_SEARCH_DIR_UP 1
+#define TEA5767_SEARCH_DIR_DOWN 2
 
 #include <Arduino.h>
 
@@ -158,6 +158,7 @@ class TEA5767 {
 		void search_up (unsigned char *buf);
 		void search_down (unsigned char *buf);
 		int process_search (unsigned char *buf, int search_dir);
+		void init();
 };
 
 #endif  // _TEA5767_H_

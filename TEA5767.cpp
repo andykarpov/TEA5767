@@ -85,7 +85,7 @@ void TEA5767::set_frequency (int hilo, double freq) {
 	else
 		div = (4 * (freq * 1000 - 225)) / 32.768;
 
-	buffer[0] = (div >> 8);    // & 0x3f;
+	buffer[0] = (div >> 8) & 0x3f;
 	buffer[1] = div & 0xff;
 
 	Wire.beginTransmission (0x60);
@@ -156,7 +156,7 @@ void TEA5767::search_up (unsigned char *buf) {
 
 	div = (4 * (((freq_av + 98304) / 1000000) * 1000000 + 225000)) / 32768;
 
-  	buf[0] = (div >> 8);        // & 0x3f;
+	buf[0] = (div >> 8) & 0x3f;
   	buf[1] = div & 0xff;
 
   	buf[0] |= TEA5767_SEARCH;
@@ -213,7 +213,7 @@ void TEA5767::search_down (unsigned char *buf)
 
   	div = (4 * (((freq_av - 98304) / 1000000) * 1000000 + 225000)) / 32768;
 
-  	buf[0] = (div >> 8);        // & 0x3f;
+	buf[0] = (div >> 8) & 0x3f;
   	buf[1] = div & 0xff;
 
   	buf[0] |= TEA5767_SEARCH;
@@ -266,13 +266,13 @@ int TEA5767::process_search (unsigned char *buf, int search_dir)
 {
   	if (ready (buf) == 1) {
       	if (bl_reached (buf) == 1) {
-      		if (search_dir == TEA5767_SEARCH_UP) {
+      		if (search_dir == TEA5767_SEARCH_DIR_UP) {
           		//wrap down
           		set_frequency (87.5);
           		read_status (buf);
           		search_up (buf);
           		return 0;
-        	} else if (search_dir == TEA5767_SEARCH_DOWN) {
+        	} else if (search_dir == TEA5767_SEARCH_DIR_DOWN) {
           		//wrap up
           		set_frequency (108);
           		read_status (buf);
@@ -288,5 +288,20 @@ int TEA5767::process_search (unsigned char *buf, int search_dir)
       		return 1;
     	}
     }
+}
+
+void TEA5767::init() {
+  ctrl_data.port1 = 1;
+  ctrl_data.port2 = 1;
+  ctrl_data.high_cut = 1;
+  ctrl_data.st_noise = 1;
+  ctrl_data.soft_mute = 1;
+  ctrl_data.deemph_75 = 0;
+  ctrl_data.japan_band = 0;
+  ctrl_data.pllref = 0;
+
+//  unsigned long freq = 87500000;
+//  set_frequency((float) freq / 1000000);
+  
 }
 
